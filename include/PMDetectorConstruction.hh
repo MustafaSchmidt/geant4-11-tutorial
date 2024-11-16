@@ -21,17 +21,6 @@ public:
     virtual ~PMDetectorConstruction();
     
     virtual G4VPhysicalVolume *Construct();
-
-private:
-    G4double xWorld, yWorld, zWorld;
-
-    G4Material *worldMat;
-
-    G4Box *solidWorld;
-    G4LogicalVolume *logicWorld;
-    G4VPhysicalVolume *physWorld;
-
-    void DefineMaterials();
 };
 
 #endif
