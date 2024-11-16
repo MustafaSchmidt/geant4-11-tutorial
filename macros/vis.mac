@@ -12,3 +12,8 @@
 /vis/scene/add/scale 10 cm 
 /vis/scene/add/axes
 /vis/scene/add/eventID
+
+/vis/reviewKeptEvents
+
+/vis/viewer/flush
+/vis/viewer/rebuild

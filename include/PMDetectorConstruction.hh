@@ -8,6 +8,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4Material.hh"
 
 #include "G4NistManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -20,6 +21,17 @@ public:
     virtual ~PMDetectorConstruction();
     
     virtual G4VPhysicalVolume *Construct();
+
+private:
+    G4double xWorld, yWorld, zWorld;
+
+    G4Material *worldMat;
+
+    G4Box *solidWorld;
+    G4LogicalVolume *logicWorld;
+    G4VPhysicalVolume *physWorld;
+
+    void DefineMaterials();
 };
 
 #endif

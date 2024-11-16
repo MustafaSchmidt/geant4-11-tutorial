@@ -1,10 +1,12 @@
 #include "PMActionInitialization.hh"
 
-PMActionInitialization::PMActionInitialization() : G4VUserActionInitialization()
+PMActionInitialization::PMActionInitialization()
 {
 }
 
-PMActionInitialization::~PMActionInitialization() {}
+PMActionInitialization::~PMActionInitialization()
+{
+}
 
 void PMActionInitialization::BuildForMaster() const
 {

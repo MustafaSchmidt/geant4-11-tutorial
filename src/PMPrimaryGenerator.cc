@@ -2,15 +2,8 @@
 
 PMPrimaryGenerator::PMPrimaryGenerator()
 {
-}
+    fParticleGun = new G4ParticleGun(1);
 
-PMPrimaryGenerator::~PMPrimaryGenerator()
-{
-    delete fParticleGun;
-}
-
-void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
-{
     // Particle position
     G4double x = 0.;
     G4double y = 0.;
@@ -27,13 +20,21 @@ void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 
     // Particle type:
     G4ParticleTable *particleTable = G4ParticleTable ::GetParticleTable();
-    G4ParticleDefinition *particle = particleTable->FindParticle("e+");    
+    G4ParticleDefinition *particle = particleTable->FindParticle("e+");
 
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
-    fParticleGun->SetParticleEnergy(1. * MeV);
+    fParticleGun->SetParticleEnergy(1. * GeV);
     fParticleGun->SetParticleDefinition(particle);
+}
 
+PMPrimaryGenerator::~PMPrimaryGenerator()
+{
+    delete fParticleGun;
+}
+
+void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
+{
     // create vertex
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

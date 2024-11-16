@@ -4,7 +4,9 @@ PMEventAction::PMEventAction(PMRunAction *)
 {
 }
 
-PMEventAction::~PMEventAction() {}
+PMEventAction::~PMEventAction()
+{
+}
 
 void PMEventAction::BeginOfEventAction(const G4Event *event)
 {
