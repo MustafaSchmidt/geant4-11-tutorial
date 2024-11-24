@@ -20,11 +20,11 @@ PMPrimaryGenerator::PMPrimaryGenerator()
 
     // Particle type:
     G4ParticleTable *particleTable = G4ParticleTable ::GetParticleTable();
-    G4ParticleDefinition *particle = particleTable->FindParticle("e+");
+    G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
 
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
-    fParticleGun->SetParticleEnergy(1. * GeV);
+    fParticleGun->SetParticleEnergy(1. * MeV);
     fParticleGun->SetParticleDefinition(particle);
 }
 
