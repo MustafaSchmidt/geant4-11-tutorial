@@ -14,17 +14,17 @@ PMPrimaryGenerator::PMPrimaryGenerator()
     // Particle direction
     G4double px = 0.;
     G4double py = 0.;
-    G4double pz = 0.;
+    G4double pz = 1.;
 
     G4ThreeVector mom(px, py, pz);
 
     // Particle type
     G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition *particle = particleTable->FindParticle("e+");
+    G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
 
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
-    fParticleGun->SetParticleEnergy(1. * GeV);
+    fParticleGun->SetParticleEnergy(1. * MeV);
     fParticleGun->SetParticleDefinition(particle);
 }
 
