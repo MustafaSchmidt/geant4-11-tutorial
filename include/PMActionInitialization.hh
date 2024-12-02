@@ -4,6 +4,7 @@
 #include "G4VUserActionInitialization.hh"
 
 #include "PMPrimaryGenerator.hh"
+#include "PMRunAction.hh"
 
 class PMActionInitialization : public G4VUserActionInitialization
 {
