@@ -1,6 +1,7 @@
 /run/initialize
 
 /vis/open OGL 600x600-0+0
+/vis/ogl/set/displayListLimit 5000
 
 /vis/viewer/set/viewpointVector 1 1 1
 /vis/viewer/set/autoRefresh true
@@ -10,7 +11,6 @@
 /vis/drawVolume
 
 /vis/scene/add/trajectories smooth
-/vis/scene/endOfEventAction accumulate
 /vis/scene/add/scale 10 cm 
 /vis/scene/add/axes
 /vis/scene/add/eventID

@@ -16,14 +16,6 @@ void PMSensitiveDetector::Initialize(G4HCofThisEvent *)
 
 G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
 {
-    if (aStep->GetTrack()->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
-    {
-        G4Track *track = aStep->GetTrack();
-        track->SetTrackStatus(fStopAndKill);
-
-        std::cout << "Photon" << std::endl;
-    }
-
     G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
     G4AnalysisManager *analysisManager = G4AnalysisManager::Instance();

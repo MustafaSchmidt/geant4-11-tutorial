@@ -17,15 +17,6 @@ PMPrimaryGenerator::PMPrimaryGenerator()
     G4double pz = 1.;
 
     G4ThreeVector mom(px, py, pz);
-
-    // Particle type:
-    G4ParticleTable *particleTable = G4ParticleTable ::GetParticleTable();
-    G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
-
-    fParticleGun->SetParticlePosition(pos);
-    fParticleGun->SetParticleMomentumDirection(mom);
-    fParticleGun->SetParticleEnergy(1. * MeV);
-    fParticleGun->SetParticleDefinition(particle);
 }
 
 PMPrimaryGenerator::~PMPrimaryGenerator()
@@ -35,6 +26,18 @@ PMPrimaryGenerator::~PMPrimaryGenerator()
 
 void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
+    // Particle type:
+    G4int Z = 9;
+    G4int A = 18;
+
+    G4double charge = 0. * eplus; // atom
+    G4double energy = 0. * keV;
+
+    G4ParticleDefinition *ion = G4IonTable::GetIonTable()->GetIon(Z, A, energy);
+    fParticleGun->SetParticleDefinition(ion);
+    fParticleGun->SetParticleCharge(charge);
+    fParticleGun->SetParticleEnergy(0.);
+
     // create vertex
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

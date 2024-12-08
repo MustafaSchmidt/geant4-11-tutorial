@@ -34,12 +34,15 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     std::cout << "Maximum photon energy: " << photonEnergyMax << std::endl;
 
     std::vector<G4double> photonEnergy = {photonEnergyMin * eV, photonEnergyMax * eV};
-    std::vector<G4double> detRefIndex = {1.2, 1.2};
+    std::vector<G4double> detRefIndex = {1.8, 1.8};
     std::vector<G4double> worldRefIndex = {1.0, 1.0};
+    std::vector<G4double> fraction = {1.0, 1.0};
 
     G4MaterialPropertiesTable *mptDet = new G4MaterialPropertiesTable();
     mptDet->AddProperty("RINDEX", photonEnergy, detRefIndex);
-    mptDet->AddConstProperty("SCINTILLATIONYIELD", 1. / MeV);
+    mptDet->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, fraction);
+    mptDet->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 1. * ns);
+    mptDet->AddConstProperty("SCINTILLATIONYIELD", 37. / keV);
     mptDet->AddConstProperty("RESOLUTIONSCALE", 1.0);
     detMat->SetMaterialPropertiesTable(mptDet);
 
@@ -55,19 +58,9 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, checkOverlaps);
 
-    // Lead Absorber
-    G4double leadThickness = 2.0 * mm;
-    G4Box *solidLead = new G4Box("Lead", 5.0 * cm, 5.0 * cm, leadThickness / 2);
-    G4LogicalVolume *logicLead = new G4LogicalVolume(solidLead, leadMat, "Lead");
-    G4VPhysicalVolume *physLead = new G4PVPlacement(0, G4ThreeVector(0, 0, 5.0 * cm), logicLead, "Lead", logicWorld, false, 0);
-
-    G4VisAttributes *leadVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0, 0.5));
-    leadVisAtt->SetForceSolid(true);
-    logicLead->SetVisAttributes(leadVisAtt);
-
     // NaI Detector
     G4double detectorSize = 5.0 * cm;
-    G4Box *solidDetector = new G4Box("Detector", detectorSize, detectorSize, detectorSize);
+    G4Tubs *solidDetector = new G4Tubs("solidDetector", 0.0, 5.0 * cm, detectorSize, 0., 360. * deg);
     logicDetector = new G4LogicalVolume(solidDetector, detMat, "Detector");
     G4VPhysicalVolume *physDetector = new G4PVPlacement(0, G4ThreeVector(0, 0, 10.5 * cm), logicDetector, "Detector", logicWorld, false, 0);
 
