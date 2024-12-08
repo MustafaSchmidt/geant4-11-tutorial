@@ -31,6 +31,7 @@ private:
     G4LogicalVolume *logicDetector;
 
     virtual void ConstructSDandField();
+    G4double ConvertWavelengthToEnergy(G4double wavelength);
 };
 
 #endif
