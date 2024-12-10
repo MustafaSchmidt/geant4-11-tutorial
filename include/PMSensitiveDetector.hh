@@ -25,6 +25,7 @@ private:
     virtual void EndOfEvent(G4HCofThisEvent *) override;
 
     G4double fTotalEnergyDeposited;
+    G4int iPhotonCount;
 };
 
 #endif

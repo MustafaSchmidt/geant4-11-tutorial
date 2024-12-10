@@ -4,7 +4,7 @@ PMSensitiveDetector::PMSensitiveDetector(G4String name) : G4VSensitiveDetector(n
 {
     fTotalEnergyDeposited = 0.;
 
-    G4cout << name << G4endl;
+    iPhotonCount = 0.;
 
     detName = name;
 }
@@ -16,6 +16,8 @@ PMSensitiveDetector::~PMSensitiveDetector()
 void PMSensitiveDetector::Initialize(G4HCofThisEvent *)
 {
     fTotalEnergyDeposited = 0.;
+
+    iPhotonCount = 0.;
 }
 
 G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
@@ -59,19 +61,29 @@ G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
                 fTotalEnergyDeposited += energyDeposited;
             }
         }
+        else
+        {
+            if (track->GetCurrentStepNumber() == 1)
+            {
+                iPhotonCount += 1;
+            }
+        }
     }
 
     if (detName == "SensitivePMT")
     {
         if (track->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
         {
-            analysisManager->FillNtupleIColumn(1, 0, eventID);
-            analysisManager->FillNtupleDColumn(1, 1, globalTime);
-            analysisManager->FillNtupleDColumn(1, 2, wlen);
-            analysisManager->AddNtupleRow(1);
-        }
+            if (preStepPoint->GetStepStatus() == fGeomBoundary)
+            {
+                analysisManager->FillNtupleIColumn(1, 0, eventID);
+                analysisManager->FillNtupleDColumn(1, 1, globalTime);
+                analysisManager->FillNtupleDColumn(1, 2, wlen);
+                analysisManager->AddNtupleRow(1);
 
-        track->SetTrackStatus(fStopAndKill);
+                track->SetTrackStatus(fStopAndKill);
+            }
+        }
     }
 
     return true;
@@ -84,4 +96,5 @@ void PMSensitiveDetector::EndOfEvent(G4HCofThisEvent *)
     analysisManager->FillH1(0, fTotalEnergyDeposited);
 
     G4cout << "Deposited energy: " << fTotalEnergyDeposited << G4endl;
+    G4cout << "Photon count: " << iPhotonCount << G4endl;
 }
