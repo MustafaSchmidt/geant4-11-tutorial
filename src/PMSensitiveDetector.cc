@@ -3,6 +3,10 @@
 PMSensitiveDetector::PMSensitiveDetector(G4String name) : G4VSensitiveDetector(name)
 {
     fTotalEnergyDeposited = 0.;
+
+    G4cout << name << G4endl;
+
+    detName = name;
 }
 
 PMSensitiveDetector::~PMSensitiveDetector()
@@ -33,17 +37,41 @@ G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
 
     G4double wlen = (1.239841939 * eV / momPhotonMag) * 1E+03;
 
-    analysisManager->FillNtupleIColumn(0, 0, eventID);
-    analysisManager->FillNtupleDColumn(0, 1, posPhoton[0]);
-    analysisManager->FillNtupleDColumn(0, 2, posPhoton[1]);
-    analysisManager->FillNtupleDColumn(0, 3, posPhoton[2]);
-    analysisManager->FillNtupleDColumn(0, 4, globalTime);
-    analysisManager->FillNtupleDColumn(0, 5, wlen);
-    analysisManager->AddNtupleRow(0);
+    G4Track *track = aStep->GetTrack();
 
-    if (energyDeposited > 0)
+    if (detName == "SensitiveDetector")
     {
-        fTotalEnergyDeposited += energyDeposited;
+        if (aStep->GetTrack()->GetDefinition() == G4Gamma::GammaDefinition())
+        {
+            analysisManager->FillNtupleIColumn(0, 0, eventID);
+            analysisManager->FillNtupleDColumn(0, 1, posPhoton[0]);
+            analysisManager->FillNtupleDColumn(0, 2, posPhoton[1]);
+            analysisManager->FillNtupleDColumn(0, 3, posPhoton[2]);
+            analysisManager->FillNtupleDColumn(0, 4, globalTime);
+            analysisManager->FillNtupleDColumn(0, 5, momPhotonMag);
+            analysisManager->AddNtupleRow(0);
+        }
+
+        if (aStep->GetTrack()->GetDefinition() != G4OpticalPhoton::OpticalPhotonDefinition())
+        {
+            if (energyDeposited > 0)
+            {
+                fTotalEnergyDeposited += energyDeposited;
+            }
+        }
+    }
+
+    if (detName == "SensitivePMT")
+    {
+        if (track->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
+        {
+            analysisManager->FillNtupleIColumn(1, 0, eventID);
+            analysisManager->FillNtupleDColumn(1, 1, globalTime);
+            analysisManager->FillNtupleDColumn(1, 2, wlen);
+            analysisManager->AddNtupleRow(1);
+        }
+
+        track->SetTrackStatus(fStopAndKill);
     }
 
     return true;

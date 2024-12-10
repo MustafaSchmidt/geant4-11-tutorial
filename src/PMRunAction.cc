@@ -6,14 +6,19 @@ PMRunAction::PMRunAction()
 
     analysisManager->CreateH1("Edep", "Energy deposit", 100, 0., 1.1 * MeV);
 
-    analysisManager->CreateNtuple("Photons", "Photons");
+    analysisManager->CreateNtuple("Scintillator", "Scintillator");
     analysisManager->CreateNtupleIColumn("iEvent");
     analysisManager->CreateNtupleDColumn("fX");
     analysisManager->CreateNtupleDColumn("fY");
     analysisManager->CreateNtupleDColumn("fZ");
     analysisManager->CreateNtupleDColumn("fGlobalTime");
-    analysisManager->CreateNtupleDColumn("fWlen");
+    analysisManager->CreateNtupleDColumn("fEnergy");
     analysisManager->FinishNtuple(0);
+    analysisManager->CreateNtuple("Detector", "Detector");
+    analysisManager->CreateNtupleIColumn("iEvent");
+    analysisManager->CreateNtupleDColumn("fGlobalTime");
+    analysisManager->CreateNtupleDColumn("fWlen");
+    analysisManager->FinishNtuple(1);
 }
 
 PMRunAction::~PMRunAction()

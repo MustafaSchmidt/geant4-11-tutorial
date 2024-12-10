@@ -41,14 +41,14 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4MaterialPropertiesTable *mptDet = new G4MaterialPropertiesTable();
     mptDet->AddProperty("RINDEX", photonEnergy, detRefIndex);
     mptDet->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, fraction);
-    mptDet->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 1. * ns);
+    mptDet->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 50. * ns);
     mptDet->AddConstProperty("SCINTILLATIONYIELD", 37. / keV);
     mptDet->AddConstProperty("RESOLUTIONSCALE", 1.0);
     detMat->SetMaterialPropertiesTable(mptDet);
 
     G4MaterialPropertiesTable *mptWorld = new G4MaterialPropertiesTable();
     mptWorld->AddProperty("RINDEX", photonEnergy, detRefIndex);
-    worldMat->SetMaterialPropertiesTable(mptWorld);
+    //worldMat->SetMaterialPropertiesTable(mptWorld);
 
     G4double xWorld = 1. * m;
     G4double yWorld = 1. * m;
@@ -58,7 +58,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, checkOverlaps);
 
-    // NaI Detector
+    // NaI Scintillator
     G4double detectorSize = 5.0 * cm;
     G4Tubs *solidDetector = new G4Tubs("solidDetector", 0.0, 5.0 * cm, detectorSize, 0., 360. * deg);
     logicDetector = new G4LogicalVolume(solidDetector, detMat, "Detector");
@@ -68,6 +68,16 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     detVisAtt->SetForceSolid(true);
     logicDetector->SetVisAttributes(detVisAtt);
 
+    // Photomultiplier tube
+    G4double PMTSize = 2.0 * cm;
+    G4Tubs *solidPMT = new G4Tubs("solidPMT", 0.0, 5.0 * cm, PMTSize, 0., 360. * deg);
+    logicPMT = new G4LogicalVolume(solidPMT, detMat, "logicPMT");
+    G4VPhysicalVolume *physPMT = new G4PVPlacement(0, G4ThreeVector(0, 0, 17.5 * cm), logicPMT, "physPMT", logicWorld, false, 0);
+
+    G4VisAttributes *PMTVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0, 0.5));
+    PMTVisAtt->SetForceSolid(true);
+    logicPMT->SetVisAttributes(PMTVisAtt);
+    
     return physWorld;
 }
 
@@ -76,5 +86,9 @@ void PMDetectorConstruction::ConstructSDandField()
     PMSensitiveDetector *sensDet = new PMSensitiveDetector("SensitiveDetector");
     logicDetector->SetSensitiveDetector(sensDet);
 
+    PMSensitiveDetector *sensPMT = new PMSensitiveDetector("SensitivePMT");
+    logicPMT->SetSensitiveDetector(sensPMT);
+
     G4SDManager::GetSDMpointer()->AddNewDetector(sensDet);
+    G4SDManager::GetSDMpointer()->AddNewDetector(sensPMT);
 }
