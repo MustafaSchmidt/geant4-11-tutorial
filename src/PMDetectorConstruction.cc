@@ -61,9 +61,9 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     mptMirror->AddProperty("REFLECTIVITY", photonEnergy, reflectivity);
     mirrorSurface->SetMaterialPropertiesTable(mptMirror);
 
-    G4double xWorld = 1. * m;
-    G4double yWorld = 1. * m;
-    G4double zWorld = 1. * m;
+    G4double xWorld = 0.5 * m;
+    G4double yWorld = 0.5 * m;
+    G4double zWorld = 0.5 * m;
 
     G4Box *solidWorld = new G4Box("solidWorld", 0.5 * xWorld, 0.5 * yWorld, 0.5 * zWorld);
     G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");

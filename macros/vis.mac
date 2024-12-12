@@ -3,7 +3,8 @@
 /vis/open OGL 600x600-0+0
 /vis/ogl/set/displayListLimit 5000
 
-/vis/viewer/set/viewpointVector 1 1 1
+/vis/viewer/zoom 3
+/vis/viewer/set/viewpointVector 1 0 0
 /vis/viewer/set/autoRefresh true
 
 #/vis/geometry/set/visibility logicWorld 0 false
