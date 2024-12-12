@@ -74,7 +74,7 @@ G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
     {
         if (track->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
         {
-            if (preStepPoint->GetStepStatus() == fGeomBoundary)
+            if (postStepPoint->GetStepStatus() == fGeomBoundary)
             {
                 analysisManager->FillNtupleIColumn(1, 0, eventID);
                 analysisManager->FillNtupleDColumn(1, 1, globalTime);

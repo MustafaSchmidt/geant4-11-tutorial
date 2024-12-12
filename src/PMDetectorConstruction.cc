@@ -26,6 +26,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4Material *worldMat = nist->FindOrBuildMaterial("G4_AIR");
     G4Material *leadMat = nist->FindOrBuildMaterial("G4_Pb");
     G4Material *detMat = nist->FindOrBuildMaterial("G4_Pb");
+    G4Material *shieldMat = nist->FindOrBuildMaterial("G4_Fe");
 
     G4double photonEnergyMin = ConvertWavelengthToEnergy(800. * nm);
     G4double photonEnergyMax = ConvertWavelengthToEnergy(300. * nm);
@@ -48,7 +49,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
 
     G4MaterialPropertiesTable *mptWorld = new G4MaterialPropertiesTable();
     mptWorld->AddProperty("RINDEX", photonEnergy, detRefIndex);
-    //worldMat->SetMaterialPropertiesTable(mptWorld);
+    // worldMat->SetMaterialPropertiesTable(mptWorld);
 
     G4double xWorld = 1. * m;
     G4double yWorld = 1. * m;
@@ -59,25 +60,54 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, checkOverlaps);
 
     // NaI Scintillator
-    G4double detectorSize = 5.0 * cm;
-    G4Tubs *solidDetector = new G4Tubs("solidDetector", 0.0, 5.0 * cm, detectorSize, 0., 360. * deg);
+    G4double detectorLength = 5.0 * cm;
+    G4double detectorRadius = 5.0 * cm;
+    G4double detectorShift = 10. * cm;
+    
+    G4Tubs *solidDetector = new G4Tubs("solidDetector", 0.0, detectorRadius, detectorLength, 0., 360. * deg);
     logicDetector = new G4LogicalVolume(solidDetector, detMat, "Detector");
-    G4VPhysicalVolume *physDetector = new G4PVPlacement(0, G4ThreeVector(0, 0, 10.5 * cm), logicDetector, "Detector", logicWorld, false, 0);
+    G4VPhysicalVolume *physDetector = new G4PVPlacement(0, G4ThreeVector(0, 0, detectorShift), logicDetector, "Detector", logicWorld, false, 0);
 
     G4VisAttributes *detVisAtt = new G4VisAttributes(G4Colour(1.0, 1.0, 0.0, 0.5));
     detVisAtt->SetForceSolid(true);
     logicDetector->SetVisAttributes(detVisAtt);
 
     // Photomultiplier tube
-    G4double PMTSize = 2.0 * cm;
-    G4Tubs *solidPMT = new G4Tubs("solidPMT", 0.0, 5.0 * cm, PMTSize, 0., 360. * deg);
+    G4double PMTLength = 0.5 * cm;
+    G4double PMTShift = detectorLength + PMTLength + detectorShift;
+
+    G4Tubs *solidPMT = new G4Tubs("solidPMT", 0.0, detectorRadius, PMTLength, 0., 360. * deg);
     logicPMT = new G4LogicalVolume(solidPMT, detMat, "logicPMT");
-    G4VPhysicalVolume *physPMT = new G4PVPlacement(0, G4ThreeVector(0, 0, 17.5 * cm), logicPMT, "physPMT", logicWorld, false, 0);
+    G4VPhysicalVolume *physPMT = new G4PVPlacement(0, G4ThreeVector(0, 0, PMTShift), logicPMT, "physPMT", logicWorld, false, 0);
 
     G4VisAttributes *PMTVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0, 0.5));
     PMTVisAtt->SetForceSolid(true);
     logicPMT->SetVisAttributes(PMTVisAtt);
-    
+
+    // Shielding
+    G4double shieldLength = PMTShift + PMTLength;
+    G4double shieldThickness = 2.0 * cm;
+    G4double shieldRadius = detectorRadius + shieldThickness;
+
+    G4Tubs *solidShield = new G4Tubs("solidPMT", detectorRadius, shieldRadius, shieldLength, 0., 360. * deg);
+    G4LogicalVolume *logicShield = new G4LogicalVolume(solidShield, shieldMat, "logicPMT");
+    G4VPhysicalVolume *physShield = new G4PVPlacement(0, G4ThreeVector(0, 0, 0 * cm), logicShield, "physShield", logicWorld, false, 0);
+
+    G4VisAttributes *ShieldVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0, 0.5));
+    ShieldVisAtt->SetForceSolid(true);
+    logicShield->SetVisAttributes(ShieldVisAtt);
+
+    // Endcaps
+    G4double endcapLength = 2.0 * cm;
+    G4double endcapShift = shieldLength + endcapLength;
+
+    G4Tubs *solidEndcap = new G4Tubs("solidEndap", 0.0 * cm, shieldRadius, endcapLength, 0., 360. * deg);
+    G4LogicalVolume *logicEndcap = new G4LogicalVolume(solidEndcap, shieldMat, "logicEndcap");
+    G4VPhysicalVolume *physEndcap1 = new G4PVPlacement(0, G4ThreeVector(0, 0, endcapShift), logicEndcap, "physEndcap1", logicWorld, false, 0);
+    G4VPhysicalVolume *physEndcap2 = new G4PVPlacement(0, G4ThreeVector(0, 0, -endcapShift), logicEndcap, "physEndcap2", logicWorld, false, 0);
+
+    logicEndcap->SetVisAttributes(ShieldVisAtt);
+
     return physWorld;
 }
 
