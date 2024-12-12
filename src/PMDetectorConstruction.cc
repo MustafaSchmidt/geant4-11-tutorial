@@ -38,7 +38,17 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     std::vector<G4double> detRefIndex = {1.8, 1.8};
     std::vector<G4double> worldRefIndex = {1.0, 1.0};
     std::vector<G4double> fraction = {1.0, 1.0};
+    std::vector<G4double> reflectivity = {0.9, 0.9};
 
+    // Mirror surface
+    G4OpticalSurface *mirrorSurface = new G4OpticalSurface("lg_mirror_op_surf");
+
+    mirrorSurface->SetType(dielectric_metal);
+    mirrorSurface->SetModel(unified);
+    mirrorSurface->SetFinish(ground);
+    mirrorSurface->SetSigmaAlpha(0.0001);
+
+    // Material properties
     G4MaterialPropertiesTable *mptDet = new G4MaterialPropertiesTable();
     mptDet->AddProperty("RINDEX", photonEnergy, detRefIndex);
     mptDet->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, fraction);
@@ -47,9 +57,9 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     mptDet->AddConstProperty("RESOLUTIONSCALE", 1.0);
     detMat->SetMaterialPropertiesTable(mptDet);
 
-    G4MaterialPropertiesTable *mptWorld = new G4MaterialPropertiesTable();
-    mptWorld->AddProperty("RINDEX", photonEnergy, detRefIndex);
-    // worldMat->SetMaterialPropertiesTable(mptWorld);
+    G4MaterialPropertiesTable *mptMirror = new G4MaterialPropertiesTable();
+    mptMirror->AddProperty("REFLECTIVITY", photonEnergy, reflectivity);
+    mirrorSurface->SetMaterialPropertiesTable(mptMirror);
 
     G4double xWorld = 1. * m;
     G4double yWorld = 1. * m;
@@ -63,7 +73,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4double detectorLength = 5.0 * cm;
     G4double detectorRadius = 5.0 * cm;
     G4double detectorShift = 10. * cm;
-    
+
     G4Tubs *solidDetector = new G4Tubs("solidDetector", 0.0, detectorRadius, detectorLength, 0., 360. * deg);
     logicDetector = new G4LogicalVolume(solidDetector, detMat, "Detector");
     G4VPhysicalVolume *physDetector = new G4PVPlacement(0, G4ThreeVector(0, 0, detectorShift), logicDetector, "Detector", logicWorld, false, 0);
@@ -96,6 +106,9 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4VisAttributes *ShieldVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0, 0.5));
     ShieldVisAtt->SetForceSolid(true);
     logicShield->SetVisAttributes(ShieldVisAtt);
+
+    // Mirror surface
+    G4LogicalBorderSurface *surfaceMirror = new G4LogicalBorderSurface("MirrorSurface", physDetector, physShield, mirrorSurface);
 
     // Endcaps
     G4double endcapLength = 2.0 * cm;
