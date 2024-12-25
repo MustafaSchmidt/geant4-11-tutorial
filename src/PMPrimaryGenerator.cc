@@ -7,16 +7,20 @@ PMPrimaryGenerator::PMPrimaryGenerator()
     // Particle position
     G4double x = 0.;
     G4double y = 0.;
-    G4double z = 0.;
+    G4double z = -1. * cm;
 
     G4ThreeVector pos(x, y, z);
+
+    fParticleGun->SetParticlePosition(pos);
 
     // Particle direction
     G4double px = 0.;
     G4double py = 0.;
-    G4double pz = 1.;
+    G4double pz = 0.;
 
     G4ThreeVector mom(px, py, pz);
+
+    fParticleGun->SetParticleMomentumDirection(mom);
 }
 
 PMPrimaryGenerator::~PMPrimaryGenerator()

@@ -32,7 +32,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4Isotope* F18 = new G4Isotope("F18", 9, 18, 18.000938 * g / mole);
     G4Element* elF18 = new G4Element("Fluorine-18", "F18", 1);
     elF18->AddIsotope(F18, 100.0 * perCent);
-    G4Material* matF18 = new G4Material("F18Source", 1.0 * g / cm3, 1);
+    G4Material* matF18 = new G4Material("F18Source", 1.51 * g / cm3, 1);
     matF18->AddElement(elF18, 100.0 * perCent);
 
     G4double photonEnergyMin = ConvertWavelengthToEnergy(800. * nm);
@@ -79,9 +79,13 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     // Fluorine Source
     G4double sourceRadius = 1.0 * mm;
 
-    G4Sphere *solidSource = new G4Sphere("solidSource", 0.0, sourceRadius, 0.0, 2 * CLHEP::pi, 0.0, CLHEP::pi);
+    G4Sphere *solidSource = new G4Sphere("solidSource", 0.0, sourceRadius, 0.0, 360. *deg, 0.0, 180. * deg);
     G4LogicalVolume *logicSource = new G4LogicalVolume(solidSource, matF18, "logicSource");
-    G4VPhysicalVolume *physSource = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicSource, "physSource", logicWorld, false, 0);
+    G4VPhysicalVolume *physSource = new G4PVPlacement(0, G4ThreeVector(0, 0, -1 * cm), logicSource, "physSource", logicWorld, false, 0);
+
+    G4VisAttributes *sourceVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 1.0, 0.5));
+    sourceVisAtt->SetForceSolid(true);
+    logicSource->SetVisAttributes(sourceVisAtt);
 
     // NaI Scintillator
     G4double detectorLength = 5.0 * cm;
